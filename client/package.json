@@ -1,0 +1,40 @@
+{
+  "name": "enft",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npx kill-port 3000 && nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-brands-svg-icons": "^5.15.4",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/vue-fontawesome": "^2.0.2",
+    "@nuxtjs/auth-next": "5.0.0-1624817847.21691f1",
+    "@nuxtjs/axios": "^5.13.6",
+    "cids": "^1.1.9",
+    "core-js": "^3.15.1",
+    "dayjs": "^1.10.7",
+    "ethers": "^5.5.1",
+    "fs": "0.0.1-security",
+    "ipfs-api": "^26.1.2",
+    "ipfs-core": "^0.11.1",
+    "ipfs-http-client": "^53.0.1",
+    "jsonlint-mod": "^1.7.6",
+    "nuxt": "^2.15.7",
+    "nuxt-fontawesome": "^0.4.0",
+    "sweetalert2": "^11.1.9",
+    "truffle-contract": "^4.0.31",
+    "vue-sweetalert2": "^5.0.2",
+    "vuetify": "^2.5.5",
+    "web3": "^1.6.0",
+    "web3modal": "^1.9.4"
+  },
+  "devDependencies": {
+    "@nuxtjs/vuetify": "^1.12.1",
+    "font-awesome": "^4.7.0"
+  }
+}
