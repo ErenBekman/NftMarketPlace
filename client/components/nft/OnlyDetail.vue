@@ -108,10 +108,6 @@
         sale:false,
         num:null,
     }),
-    //   async asyncData({params}) {
-    //     let num = params.id
-    //     return { num }
-    // },
   async mounted() {
       try {
                 // let web3 = await getWeb3();
@@ -129,7 +125,6 @@
                 this.NftInstance = NftInstance;
                 this.total = await NftInstance.methods.totalSupply().call()
                 this.account = accounts;
-                // const id = await NftInstance.methods.getNftId().call()
                 const latest = await web3.eth.getBlockNumber();
                 let logs = await this.NftInstance.getPastEvents('NFTCreated', {
                    fromBlock: latest - 100,

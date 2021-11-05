@@ -77,7 +77,7 @@ contract('ENFT', (accounts) => {
         it('6', async () => {
         //   const balance = await web3.eth.getBalance(accounts[1]);
           const balance = accounts[1];
-          const tx = await enftInstance.SaleNft(0, { from: balance, value: 50 });
+          const tx = await enftInstance.SaleNft(0, { from: balance, value: 20 });
           truffleAssert.eventEmitted(tx, 'NftSold', async (event) => {
             const { buyer }  = event;
             return (buyer === balance);

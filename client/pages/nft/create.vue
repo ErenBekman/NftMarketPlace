@@ -162,7 +162,6 @@ export default {
                 this.account = accounts;
                 this.latest = latest
                 this.total = await NftInstance.methods.totalSupply().call()
-                // this.nftId = await NftInstance.methods.getNftId().call()
                 this.loaded = true;
                 if (this.loaded) {
                 const Toast = this.$swal.mixin({
@@ -185,16 +184,15 @@ export default {
                 console.log(NftInstance);
                 console.log(web3);
           }catch(e) {
-            this.loaded = false;
-            if(!this.loaded){
-            this.$swal.fire({
-              title: 'Fail!',
-              text: 'Failed to load web3, accounts, or contract. Check console for details.',
-              icon: 'error',
-              confirmButtonText: 'Ok!'
-            })
+              this.loaded = false;
+              if(!this.loaded){
+              this.$swal.fire({
+                title: 'Fail!',
+                text: 'Failed to load web3, accounts, or contract. Check console for details.',
+                icon: 'error',
+                confirmButtonText: 'Ok!'
+              })
             }
-            // alert("Failed to load web3, accounts, or contract. Check console for details.");
           }
   },
    methods: {
