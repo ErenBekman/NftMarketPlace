@@ -31,7 +31,7 @@
               max-width="450"
             >
               <v-card-text>
-                <div class="mb-4">{{ nft.name}} #{{ nft.id }}</div>
+                <div class="mb-4">{{ nft.name }} #{{ nft.id }}</div>
                 <div class="text--primary mb-7">
                     <font-awesome-icon :icon="['fab', 'ethereum']" class="font"/>
                   <span class="font">{{ nft.price }}</span> <span class="fontx">(${{ nft.price * 4.480 }})</span>
@@ -89,8 +89,7 @@
 
 
 <script>
-// import getWeb3 from '../../getWeb3'
-// import Nft from '../../../build/contracts/ENFT.json'
+
   export default {
     // props:['nft'],
     data: () => ({
@@ -107,10 +106,11 @@
         price:null,
         sale:false,
         num:null,
+        userId:null,
+        userAddr:null,
     }),
   async mounted() {
       try {
-                // let web3 = await getWeb3();
                 let num = this.$route.params.id;
                 this.num = num
                 let web3 = await this.$web3;
@@ -132,12 +132,25 @@
                   });
                     let len = logs.length - 1;
                     const id = logs[len].returnValues.nftId;
+                    this.userId = logs[len].returnValues.userId;
                     this.sale = logs[len].returnValues.isSold;
                     this.nftId = id;
-                    let data = await NftInstance.methods.getNftItem(num).call()
-                    this.nft = data
-                    this.latest = latest
                     this.price = logs[len].returnValues.price;
+
+                    let data = await NftInstance.methods.getAllNftItem(num).call()
+                    this.nft= data;
+
+                    // let lobs = await NftInstance.getPastEvents('UserRegister', {
+                    //     fromBlock: latest - 100,
+                    //     toBlock: latest
+                    //   });
+                    // let lan = lobs.length - 1;
+                    // let userAddr = lobs[lan].returnValues.userAddr;
+                    // this.userAddr = userAddr;
+                  
+                    // let userdata = await NftInstance.methods.getUser(userAddr).call()
+                    // // this.nft = data
+     
 
                     this.loaded = true;
                     if (this.loaded) {
@@ -158,24 +171,7 @@
                         title: 'Loaded in successfully'
                       })
                   }
-                if(this.okey){
-                const Toast = this.$swal.mixin({
-                  toast: true,
-                  position: 'top-end',
-                  showConfirmButton: false,
-                  timer: 3000,
-                  timerProgressBar: true,
-                  didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                    toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                  }
-                })
 
-                Toast.fire({
-                  icon: 'success',
-                  title: 'You Bought New NFT'
-                })
-               }
           }catch(e) {
             this.loaded = false;
              if(!this.loaded){
@@ -194,6 +190,25 @@
               .send({from: this.account, value:this.price})
         this.okey = true
         this.sale = true
+         if(this.okey){
+            const Toast = this.$swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                  toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+              }
+          })
+
+           Toast.fire({
+            icon: 'success',
+            title: 'You Bought New NFT'
+             })
+        }
+        this.$router.push('/accounts');
       },
     },
   }

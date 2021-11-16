@@ -1,25 +1,8 @@
 <template>
   <div>
-      <div class="portfolio-component mini-spacer" v-if="nft.length <= 0">
-            <v-row justify="center" >
-          <v-col cols="12" sm="10" md="9" lg="7">
-            <div class="text-center">
-              <h2 class="section-title font-weight-medium">
-                You don't created nft yet.
-              </h2>
-              <p>
-                You can relay on our amazing features list and also our customer
-                services will be great experience for you without doubt and in
-                no-time
-              </p>
-            </div>
-          </v-col>
-        </v-row>
-      </div>
-
-    <div class="portfolio-component mini-spacer" v-if="nft.length > 0">
+    <div class="portfolio-component mini-spacer">
       <v-container>
-        <v-row justify="center" >
+        <v-row justify="center">
           <v-col cols="12" sm="10" md="9" lg="7">
             <div class="text-center">
               <h2 class="section-title font-weight-medium">
@@ -33,14 +16,13 @@
             </div>
           </v-col>
         </v-row>
-
         <v-row class="mt-13">
           <v-col cols="12" class="d-flex justify-space-around align-center ml-15">
-            <v-card class="portfolio-card mr-15"   v-for="(n,index) in nft" :key="index" v-show="n.price > 0">
+            <v-card class="portfolio-card mr-15"   v-for="(n,index) in nft" :key="index">
               <div class="portfolio-img">
                  <nuxt-link :to="`/nft/${n.id}`">
                     <img
-                    :src="`${n.image}`"
+                    :src="`${n.image_url}`"
                     class="img-fluid"
                     alt="portfolio"
                     v-if="n.image"
@@ -54,7 +36,8 @@
                 </h5>
                 <p class="font-14 mb-0"> 
                   <font-awesome-icon :icon="['fab', 'ethereum']" class="font"/>
-                  {{ n.price }}
+                  <!-- {{ n.price }} -->
+                  {{ n.description }}
                   </p>
               </v-card-text>
             </v-card>
@@ -64,57 +47,25 @@
     </div>
   </div>
 </template>
-
 <script>
 export default {
   name: "Portfolio",
-  props:['mynft'],
+  props:['nft'],
   data() {
     return {
-        nft:[],
-        nftEvent:[],
-        loaded:false,
-        web3: null, 
-        account: null, 
-        NftInstance: null,
-        nftId:null,
-        okey:false,
+      loaded:false,
     };
   },
-   async mounted() {
+  methods: {},
+  async mounted() {
       try {
-        
                 let web3 = await this.$web3;
                 const [accounts] = await web3.eth.getAccounts();
-                let networkId = await web3.eth.net.getId();      
+                let networkId = await web3.eth.net.getId();    
                 let NftInstance = new web3.eth.Contract(
                   this.$Nft.abi,
                   this.$Nft.networks[networkId] && this.$Nft.networks[networkId].address,
                 );
-                const latest = await web3.eth.getBlockNumber();
-                this.web3 = web3;
-                this.NftInstance = NftInstance;
-                this.account = accounts;
-
-                let logs = await NftInstance.getPastEvents('NFTCreated', {
-                  fromBlock: latest - 100,
-                  toBlock: latest
-                });
-              this.nftEvent.push(logs);
-   
-              let len = logs.length - 1;
-              let nftId = logs[len].returnValues.nftId;
-              const userid = logs[len].returnValues.userId;
-              this.nftId = nftId
-
-              
-                for (let i = 0; i < logs.length; i++) {
-                  let data = await NftInstance.methods.getNftItem(i,userid).call()
-                    this.nft.push(data);
-                    console.log(data)
-                    this.okey = true
-                  }
-
                 this.loaded = true;
                 if (this.loaded) {
                 const Toast = this.$swal.mixin({
@@ -128,14 +79,11 @@ export default {
                     toast.addEventListener('mouseleave', this.$swal.resumeTimer)
                   }
                 })
-
                 Toast.fire({
                   icon: 'success',
                   title: 'Loaded in successfully'
                 })
               }
-                console.log(NftInstance);
-                console.log(web3);
           }catch(e) {
             this.loaded = false;
             if(!this.loaded){
@@ -146,36 +94,19 @@ export default {
               confirmButtonText: 'Ok!'
             })
             }
-            // alert("Failed to load web3, accounts, or contract. Check console for details.");
           }
   },
 };
 </script>
 
-
-
 <style scoped>
-.flex{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding:20px;
-  margin: 20px;
+.cards {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: space-between;
 }
-.pxx{
-  margin-bottom: 75px;
-}
-.list {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     overflow: hidden;
-     padding:15px;
-     margin: 25px;
-}
-.listItem {
-     display: flex;
-     flex-wrap: wrap;
-     justify-content: center;
+
+.card {
+	flex: 0 1 24%;
 }
 </style>

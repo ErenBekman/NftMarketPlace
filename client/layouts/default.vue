@@ -1,6 +1,5 @@
 <template>
   <v-app dark>
-    <!--v-if="$route.name!=='login'"-->
     <Header />
     <v-main>
       <nuxt />
@@ -11,9 +10,11 @@
 
 <script>
 export default {
-  head() {
+  data() {
     return {
       title: "NFT MarketPlace",
+      usernamee:null,
+      account:null,
       meta: [
         {
           hid: "description",
@@ -28,8 +29,8 @@ export default {
     // Footer: () => import("@/components/custom/contact/Contact.vue")
     Footer: () => import("@/components/custom/footer/Footer.vue")
   },
-  methods: {}
-};
+  methods: {},
+}
 </script>
 
 <style>

@@ -36,7 +36,7 @@
 
         <v-row class="mt-13">
           <v-col cols="12" class="d-flex justify-space-around align-center ml-15">
-            <v-card class="portfolio-card mr-15"   v-for="(n,index) in nft" :key="index" v-show="n.price > 0">
+            <v-card class="portfolio-card mr-15"   v-for="(n,index) in nft" :key="index">
               <div class="portfolio-img">
                  <nuxt-link :to="`/nft/${n.id}`">
                     <img
@@ -52,10 +52,10 @@
                 <h5 class="font-weight-medium font-18">
                   {{ n.name }}
                 </h5>
-                <p class="font-14 mb-0"> 
+                <p class="font-14 mb-0">
                   <font-awesome-icon :icon="['fab', 'ethereum']" class="font"/>
-                  {{ n.price }}
-                  </p>
+                   {{ n.price }}
+                   </p>
               </v-card-text>
             </v-card>
           </v-col>
@@ -68,53 +68,65 @@
 <script>
 export default {
   name: "Portfolio",
-  props:['mynft'],
   data() {
     return {
         nft:[],
-        nftEvent:[],
         loaded:false,
         web3: null, 
         account: null, 
         NftInstance: null,
         nftId:null,
         okey:false,
+        isSale:false,
     };
   },
    async mounted() {
       try {
-        
                 let web3 = await this.$web3;
                 const [accounts] = await web3.eth.getAccounts();
-                let networkId = await web3.eth.net.getId();      
+                let networkId = await web3.eth.net.getId();    
                 let NftInstance = new web3.eth.Contract(
                   this.$Nft.abi,
                   this.$Nft.networks[networkId] && this.$Nft.networks[networkId].address,
                 );
+                
+
                 const latest = await web3.eth.getBlockNumber();
                 this.web3 = web3;
                 this.NftInstance = NftInstance;
                 this.account = accounts;
 
+
+
                 let logs = await NftInstance.getPastEvents('NFTCreated', {
                   fromBlock: latest - 100,
                   toBlock: latest
                 });
-              this.nftEvent.push(logs);
-   
               let len = logs.length - 1;
-              let nftId = logs[len].returnValues.nftId;
+              this.nftId = logs[len].returnValues.nftId;
               const userid = logs[len].returnValues.userId;
-              this.nftId = nftId
+              console.log(userid);
 
-              
-                for (let i = 0; i < logs.length; i++) {
-                  let data = await NftInstance.methods.getNftItem(i,userid).call()
+
+
+
+
+                let lobs = await NftInstance.getPastEvents('NftSold', {
+                  fromBlock: latest - 100,
+                  toBlock: latest
+                });
+                let lan = lobs.length - 1;
+                console.log(lobs[lan].returnValues);
+
+                for (let i = 0; i < lobs.length; i++) {
+                    let data = await NftInstance.methods.getAllNftItem(i).call()
                     this.nft.push(data);
                     console.log(data)
                     this.okey = true
-                  }
+                }
 
+                this.isSale = lobs[lan].returnValues.isSold;
+                
                 this.loaded = true;
                 if (this.loaded) {
                 const Toast = this.$swal.mixin({
@@ -146,7 +158,6 @@ export default {
               confirmButtonText: 'Ok!'
             })
             }
-            // alert("Failed to load web3, accounts, or contract. Check console for details.");
           }
   },
 };

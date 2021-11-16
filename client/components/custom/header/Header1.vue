@@ -59,12 +59,15 @@
               >
               <div class="dropdown">
               <nuxt-link class="nav-link x" nuxt to="/"> 
-              <button class="nav-link x" v-if="$auth.loggedIn">{{ $auth.user.name }}</button>
+              <!-- <button class="nav-link x" v-if="$auth.loggedIn">{{ $auth.user.name }}</button> -->
+              <!-- <button class="nav-link x">{{ username }}</button> -->
               </nuxt-link>
               <!-- <nuxt-link class="nav-link x" nuxt to="/auth/login" v-else> Login </nuxt-link> -->
               
-             <li class="nav-item x" text v-if="!$auth.loggedIn">
-              <nuxt-link class="nav-link x" nuxt to="/auth/login"> Login </nuxt-link>
+             <!-- <li class="nav-item x" text v-if="!$auth.loggedIn"> -->
+             <li class="nav-item x" text>
+              <nuxt-link class="nav-link x" nuxt to="/" v-if="username"> {{ username }}</nuxt-link>
+              <nuxt-link class="nav-link x" nuxt to="/auth/login" v-else> Login </nuxt-link>
              </li>
 
               <div class="dropdown-content">
@@ -79,8 +82,10 @@
                 </div>
 
                 <div class="d-flex x">
-                  <font-awesome-icon :icon="['fas', 'sign-out-alt']" class="font" v-if="$auth.loggedIn"/>
-                  <li class="nav-item still x" text v-if="$auth.loggedIn" @click.prevent="logout()">
+                  <!-- <font-awesome-icon :icon="['fas', 'sign-out-alt']" class="font" v-if="$auth.loggedIn"/> -->
+                  <font-awesome-icon :icon="['fas', 'sign-out-alt']" class="font"/>
+                  <!-- <li class="nav-item still x" text v-if="$auth.loggedIn" @click.prevent="logout()"> -->
+                  <li class="nav-item still x" text @click.prevent="userLogout()">
                   <nuxt-link class="nav-link x" nuxt to="/auth/login"> Log Out </nuxt-link>
                   </li>
                 </div>
@@ -121,7 +126,8 @@
                     </v-list-item-avatar>
 
                     <v-list-item-content>
-                      <v-list-item-title>{{ $auth.user.name }}</v-list-item-title>
+                      <!-- <v-list-item-title>{{ $auth.user.name }}</v-list-item-title> -->
+                      <v-list-item-title>{{ username }}</v-list-item-title>
                       <v-list-item-subtitle>{{ account }}</v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
@@ -183,20 +189,27 @@ export default {
       account: null, 
       NftInstance: null,
       total:null,
+      username:null,
+      user:[],
+      logout:false
+
     };
   },
   methods: {
     toggleClass: function (event) {
       this.isActive = !this.isActive;
     },
-    async logout(){
-         await  this.$auth.logout()
+    // async logout(){
+    //      await  this.$auth.logout()
+    // },
+    async userLogout(){
+        await  this.NftInstance.methods.logout(this.account);
+        this.logout = true
     }
   },
 
     async mounted() {
       try {
-                // let web3 = await getWeb3();
                 let web3 = await this.$web3;
                 const [accounts] = await web3.eth.getAccounts();
                 let networkId = await web3.eth.net.getId();     
@@ -204,13 +217,22 @@ export default {
                   this.$Nft.abi,
                   this.$Nft.networks[networkId] && this.$Nft.networks[networkId].address,
                 );
-
                 this.web3 = web3;
                 this.NftInstance = NftInstance;
-                // this.total = await NftInstance.methods.totalSupply().call()
-                this.total = await NftInstance.methods.balanceOf(accounts).call()
+                let total = await NftInstance.methods.getBalance(accounts).call()
+                // this.total = Math.trunc(total)
+                this.total = total.slice(0, 5)
                 this.account = accounts
+                const latest = await web3.eth.getBlockNumber();
+                let logs = await NftInstance.getPastEvents('UserRegister', {
+                  fromBlock: latest - 100,
+                  toBlock: latest
+                });
+                let len = logs.length - 1;
+                this.username = logs[len].returnValues.username;
+ 
                 this.loaded = true;  
+                this.$nuxt.refresh();
           }catch(e) {
             this.loaded = false;
              if(!this.loaded){
@@ -223,6 +245,20 @@ export default {
             }
           }
   },
+  // async asyncData({$Nft, $web3}) {
+  //    let NftInstance = new $web3.eth.Contract(
+  //         $Nft.abi,
+  //         $Nft.networks[networkId] && $Nft.networks[networkId].address,
+  //     );
+  //   const latest = await $web3.eth.getBlockNumber();
+  //   let logs = await NftInstance.getPastEvents('UserRegister', {
+  //                 fromBlock: latest - 100,
+  //                 toBlock: latest
+  //     });
+  //     let len = logs.length - 1;
+  //     let username = logs[len].returnValues.username;
+  //     return { username }
+  // },
 };
 </script>
 

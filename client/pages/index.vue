@@ -9,7 +9,7 @@
         <h1 class="text-center mt-16 mb-16">Notable Drops</h1>
       </v-flex>
       <!-- <Card/> -->
-      <Slide :nft="nft" />
+      <!-- <Slide :nft="nft" /> -->
     </v-col>
 
     <v-col cols="12">
@@ -33,13 +33,13 @@ export default {
       account: null, 
       NftInstance: null,
   }),
-    async asyncData({$axios}) {
-       return await $axios.$get("https://api.coinranking.com/v2/nfts?limit=10")
-        .then(response => {
-           let nft = response.data.nfts
-           return { nft }
-        })
-    },
+    // async asyncData({$axios}) {
+    //    return await $axios.$get("https://api.coinranking.com/v2/nfts?limit=10")
+    //     .then(response => {
+    //        let nft = response.data.nfts
+    //        return { nft }
+    //     })
+    // },
 
      async mounted() {
       try {
@@ -70,6 +70,8 @@ export default {
                   icon: 'success',
                   title: 'Loaded in successfully'
                 })
+                this.$nuxt.refresh();
+                this.$nuxt.refresh();
               }
           }catch(e) {
             this.loaded = false;

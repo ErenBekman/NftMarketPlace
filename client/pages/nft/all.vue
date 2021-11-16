@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Card/>
+    <Card />
   </div>
 </template>
 
@@ -8,6 +8,11 @@
 export default {
   components: {
     Card: () => import("@/components/custom/portfolio/Portfolio.vue")
+  },
+  data(){
+    return {
+
+    }
   },
 
 }

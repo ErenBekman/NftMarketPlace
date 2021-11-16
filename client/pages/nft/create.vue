@@ -223,17 +223,7 @@ export default {
                   timer: 1500
                 })
               }
-            //  let logs = await this.NftInstance.getPastEvents('NFTCreated', {
-            //       fromBlock: this.latest - 100,
-            //       toBlock: this.latest
-            //   });
-
-            //   this.nftEvent.push(logs);
-            //   let len = logs.length - 1;
-            //   this.nftId = logs[len].returnValues.nftId;
-              // $nuxt.$emit('nftId' , this.nftId)
-                                
-          // })
+              this.$router.push('/nft/collections');
         },
       },
 };
